@@ -971,8 +971,14 @@ private class InnerWebSocket: Hashable {
     }
 
     func closeConn() {
-        rd.remove(from: RunLoop.main, forMode: RunLoop.Mode.default)
-        wr.remove(from: RunLoop.main, forMode: RunLoop.Mode.default)
+        #if swift(>=4.2)
+        let runloopMode = RunLoop.Mode.default
+        #else
+        let runloopMode = RunLoop.Mode.defaultRunLoopMode
+        #endif
+
+        rd.remove(from: RunLoop.main, forMode: runloopMode)
+        wr.remove(from: RunLoop.main, forMode: runloopMode)
         rd.delegate = nil
         wr.delegate = nil
         rd.close()
@@ -1091,8 +1097,15 @@ private class InnerWebSocket: Hashable {
         }
         rd.delegate = delegate
         wr.delegate = delegate
-        rd.schedule(in: RunLoop.main, forMode: RunLoop.Mode.default)
-        wr.schedule(in: RunLoop.main, forMode: RunLoop.Mode.default)
+        
+        #if swift(>=4.2)
+        let runloopMode = RunLoop.Mode.default
+        #else
+        let runloopMode = RunLoop.Mode.defaultRunLoopMode
+        #endif
+
+        rd.schedule(in: RunLoop.main, forMode: runloopMode)
+        wr.schedule(in: RunLoop.main, forMode: runloopMode)
         rd.open()
         wr.open()
         try write(header, length: header.count)
@@ -1466,7 +1479,7 @@ private class InnerWebSocket: Hashable {
             }
         }
         let r = arc4random()
-        var maskBytes : [UInt8] = [UInt8(r >> 0 & 0xFF), UInt8(r >> 8 & 0xFF), UInt8(r >> 16 & 0xFF), UInt8(r >> 24 & 0xFF)]
+        let maskBytes : [UInt8] = [UInt8(r >> 0 & 0xFF), UInt8(r >> 8 & 0xFF), UInt8(r >> 16 & 0xFF), UInt8(r >> 24 & 0xFF)]
         for i in 0 ..< 4 {
             head[hlen] = maskBytes[i]
             hlen += 1
