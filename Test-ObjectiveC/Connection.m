@@ -14,7 +14,7 @@
 @end
 
 @implementation Connection {
-    WebSocket *_webSocket;
+    SwiftWebSocket *_webSocket;
 }
 
 - (instancetype)init {
@@ -25,7 +25,7 @@
 }
 
 - (void)open {
-    _webSocket = [[WebSocket alloc] init:@"ws://localhost:9000"];
+    _webSocket = [[SwiftWebSocket alloc] init:@"ws://localhost:9000"];
     _webSocket.delegate = self;
     [_webSocket open];
     NSAssert(_webSocket.readyState == WebSocketReadyStateConnecting, @"WebSocket is not connecting");
